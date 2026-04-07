@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <!-- Dark background gradient -->
+    <linearGradient id="darkbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F1729" />
+      <stop offset="50%" stop-color="#141E33" />
+      <stop offset="100%" stop-color="#1A2540" />
+    </linearGradient>
+    <!-- Icon gradient matching the favicon -->
+    <linearGradient id="iconbg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6B5CE7" />
+      <stop offset="30%" stop-color="#9B6DCC" />
+      <stop offset="55%" stop-color="#C47DB0" />
+      <stop offset="80%" stop-color="#D99AAD" />
+      <stop offset="100%" stop-color="#E8B4A2" />
+    </linearGradient>
+    <!-- Icon glow -->
+    <radialGradient id="iconglow" cx="35%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </radialGradient>
+    <!-- Subtle ambient glow behind the icon -->
+    <radialGradient id="ambientglow" cx="50%" cy="38%" r="30%">
+      <stop offset="0%" stop-color="#9B6DCC" stop-opacity="0.15" />
+      <stop offset="60%" stop-color="#6B5CE7" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#6B5CE7" stop-opacity="0" />
+    </radialGradient>
+    <!-- Drop shadow filter for the icon -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="20" flood-color="#6B5CE7" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Full dark background -->
+  <rect width="1280" height="640" fill="url(#darkbg)"/>
+
+  <!-- Ambient glow behind icon -->
+  <rect width="1280" height="640" fill="url(#ambientglow)"/>
+
+  <!-- === ICON (centered, ~220px) === -->
+  <g transform="translate(530, 80)" filter="url(#shadow)">
+    <!-- Icon background -->
+    <rect width="220" height="220" rx="42" ry="42" fill="url(#iconbg)"/>
+    <!-- Soft glow overlay -->
+    <rect width="220" height="220" rx="42" ry="42" fill="url(#iconglow)"/>
+    <!-- "numify" text -->
+    <text x="110" y="82"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="38"
+      font-weight="400"
+      font-style="italic"
+      fill="#FFFFFF"
+      fill-opacity="0.95"
+      text-anchor="middle"
+      letter-spacing="3">numify</text>
+    <!-- "1.2.3" text -->
+    <text x="110" y="152"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="58"
+      font-weight="700"
+      fill="#FFFFFF"
+      fill-opacity="0.9"
+      text-anchor="middle"
+      letter-spacing="2">1.2.3</text>
+  </g>
+
+  <!-- === Plugin name === -->
+  <text x="640" y="370"
+    font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="56"
+    font-weight="700"
+    fill="#FFFFFF"
+    fill-opacity="0.95"
+    text-anchor="middle"
+    letter-spacing="1">Numify</text>
+
+  <!-- === Tagline === -->
+  <text x="640" y="420"
+    font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="22"
+    font-weight="400"
+    fill="#FFFFFF"
+    fill-opacity="0.5"
+    text-anchor="middle"
+    letter-spacing="0.5">Auto-number your Zotero collections</text>
+
+  <!-- === Description === -->
+  <text x="640" y="465"
+    font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+    font-size="16"
+    font-weight="300"
+    fill="#FFFFFF"
+    fill-opacity="0.3"
+    text-anchor="middle"
+    letter-spacing="0.3">Hierarchical prefixes that stay in sync when you create, rename, reorder, or delete</text>
+
+  <!-- === Collection tree preview (subtle decorative element) === -->
+  <g transform="translate(410, 500)" fill="none" stroke="#FFFFFF" stroke-opacity="0.15" stroke-width="1.5">
+    <!-- Tree lines -->
+    <line x1="0" y1="0" x2="0" y2="60"/>
+    <line x1="0" y1="10" x2="20" y2="10"/>
+    <line x1="0" y1="30" x2="20" y2="30"/>
+    <line x1="0" y1="50" x2="20" y2="50"/>
+    <line x1="40" y1="30" x2="40" y2="50"/>
+    <line x1="40" y1="40" x2="55" y2="40"/>
+  </g>
+  <g transform="translate(410, 500)">
+    <text x="25" y="14" font-family="'Courier New', monospace" font-size="11" fill="#E8B4A2" fill-opacity="0.5">1 Physics</text>
+    <text x="25" y="34" font-family="'Courier New', monospace" font-size="11" fill="#C47DB0" fill-opacity="0.5">2 Mathematics</text>
+    <text x="60" y="44" font-family="'Courier New', monospace" font-size="11" fill="#9B6DCC" fill-opacity="0.5">2.1 Algebra</text>
+    <text x="25" y="54" font-family="'Courier New', monospace" font-size="11" fill="#6B5CE7" fill-opacity="0.5">3 Chemistry</text>
+  </g>
+
+  <!-- Zotero 7 | 8 badge -->
+  <g transform="translate(556, 575)">
+    <rect width="168" height="30" rx="15" ry="15" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.1" stroke-width="1"/>
+    <text x="84" y="20"
+      font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+      font-size="12"
+      font-weight="500"
+      fill="#FFFFFF"
+      fill-opacity="0.4"
+      text-anchor="middle"
+      letter-spacing="1.5">ZOTERO 7 &amp; 8</text>
+  </g>
+</svg>

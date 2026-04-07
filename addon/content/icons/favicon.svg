@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs>
+    <!-- Multi-stop gradient matching the purple → pink → peach image -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6B5CE7" />
+      <stop offset="30%" stop-color="#9B6DCC" />
+      <stop offset="55%" stop-color="#C47DB0" />
+      <stop offset="80%" stop-color="#D99AAD" />
+      <stop offset="100%" stop-color="#E8B4A2" />
+    </linearGradient>
+    <!-- Subtle inner glow overlay -->
+    <radialGradient id="glow" cx="35%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="96" height="96" rx="18" ry="18" fill="url(#bg)"/>
+  <!-- Soft glow overlay for depth -->
+  <rect width="96" height="96" rx="18" ry="18" fill="url(#glow)"/>
+  <!-- "numify" — lightweight elegant style -->
+  <text x="48" y="37"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="17"
+    font-weight="400"
+    font-style="italic"
+    fill="#FFFFFF"
+    fill-opacity="0.95"
+    text-anchor="middle"
+    letter-spacing="2.5">numify</text>
+  <!-- "1.2.3" — bold monospace with softer white -->
+  <text x="48" y="67"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="26"
+    font-weight="700"
+    fill="#FFFFFF"
+    fill-opacity="0.9"
+    text-anchor="middle"
+    letter-spacing="1.5">1.2.3</text>
+</svg>

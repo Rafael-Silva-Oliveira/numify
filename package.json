@@ -1,0 +1,34 @@
+{
+  "name": "numify",
+  "version": "0.1.0",
+  "description": "Auto-number Zotero collections with hierarchical prefixes",
+  "config": {
+    "addonName": "Numify",
+    "addonID": "numify@zotero-plugin.dev",
+    "addonRef": "numify",
+    "addonInstance": "Numify",
+    "prefsPrefix": "extensions.zotero.numify"
+  },
+  "scripts": {
+    "start": "zotero-plugin serve",
+    "build": "zotero-plugin build",
+    "lint": "prettier --write . && eslint --fix .",
+    "release": "zotero-plugin release"
+  },
+  "author": "rafae",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rafael-Silva-Oliveira/numify.git"
+  },
+  "dependencies": {
+    "zotero-plugin-toolkit": "^5.1.2"
+  },
+  "devDependencies": {
+    "zotero-plugin-scaffold": "^0.8.5",
+    "zotero-types": "^4.1.0-beta.4",
+    "typescript": "^5.9.0",
+    "prettier": "^3.7.0",
+    "eslint": "^9.0.0"
+  }
+}
