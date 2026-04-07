@@ -87,7 +87,7 @@ Sub-collections receive prefixes relative to their parent.
 
 ### Reordering collections
 
-Since Zotero doesn't support drag-and-drop reordering of collections, Numify lets you **reorder by editing the prefix**.
+Since Zotero doesn't support drag-and-drop reordering between collections (only to another collection), Numify lets you **reorder by editing the prefix**.
 
 For example, to move `2.1.2 Another one` to position 1:
 
