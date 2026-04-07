@@ -46,7 +46,7 @@ Library
 
 3. Click the **gear icon** (⚙) in the top-right corner and select **Install Add-on From File...**
 
-4. Browse to the downloaded `numify.xpi` file and click **Open**
+4. Browse to the downloaded `numify.xpi` file and click **Open**. Soon to be added in the Zotero Add-ons market (https://github.com/syt2/zotero-addons)
 
 5. Restart Zotero if prompted
 
