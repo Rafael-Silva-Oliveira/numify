@@ -1,1 +1,3 @@
-pref("extensions.zotero.__addonRef__.enable", true);
+pref("enable", true);
+pref("maxDepth", 6);
+pref("separator", " ");

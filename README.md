@@ -9,7 +9,8 @@ Numify automatically adds **hierarchical numeric prefixes** to your Zotero colle
 ## Features
 
 - **Auto-prefix on creation** — New collections and sub-collections are instantly numbered
-- **Deep nesting** — Supports unlimited depth (`1.2.3.4.5...`)
+- **Configurable depth** — Set how many levels deep the prefix goes (1–20)
+- **Custom separator** — Choose between space, pipe (`|`), or colon (`:`)
 - **Reorder by renaming** — Change a prefix to move a collection to a new position
 - **Gap-free numbering** — Deleting a collection renumbers remaining siblings automatically
 - **Rename-safe** — Change the base name and your prefix is preserved
@@ -104,6 +105,36 @@ For example, to move `2.1.2 Another one` to position 1:
    ![After reorder: "Another one" is now 2.1.1, former 2.1.1 shifted to 2.1.2](docs/05-reordered.png)
 
 > **Tip:** After changing a prefix, simply collapse and re-open the parent collection in the sidebar to see the updated order.
+
+## Settings
+
+To access Numify's settings, go to **Edit → Settings → Numify** (or **Zotero → Settings → Numify** on macOS).
+
+![Numify settings pane](docs/06-settings.png)
+
+### Max depth (1–20)
+
+Controls how many levels deep the numeric prefix goes. For example:
+
+| Max depth | Example result |
+|-----------|---------------|
+| 1 | `1 Physics`, `2 Math` — sub-collections have no prefix |
+| 2 | `1 Physics`, `1.1 Quantum` — deeper levels have no prefix |
+| 6 | `1.2.3.4.5.6 Deep` — default, covers most use cases |
+
+Collections beyond the configured depth keep only their base name with no prefix. Changing this setting immediately renumbers all collections in your library.
+
+### Separator
+
+The character placed between the numeric prefix and the collection name. Choose from:
+
+| Option | Example |
+|--------|---------|
+| Space (default) | `1.2.3 My Collection` |
+| Pipe | `1.2.3 \| My Collection` |
+| Colon | `1.2.3: My Collection` |
+
+Changing the separator immediately renames all collections in your library to use the new format.
 
 ## How it works
 
