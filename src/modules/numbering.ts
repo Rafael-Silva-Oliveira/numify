@@ -2,7 +2,7 @@
  * Core numbering logic for Numify.
  *
  * Prefix format: "1.2.3<sep>Collection Name"
- * where <sep> is the user-configured separator: " ", " | ", or ": "
+ * where <sep> is the user-configured separator: " " (space) or " - " (dash)
  *
  * - Top-level collections: "1 Name", "2 Name"
  * - Sub-collections: "1.1 Name", "1.2 Name"
@@ -10,14 +10,14 @@
  */
 
 /**
- * Matches any of the three supported separators after a numeric prefix.
- * Captures: (1) the numeric prefix, (2) the separator used.
- * Handles: " | ", ": ", or " " (space-only).
+ * Matches any known separator after a numeric prefix for PARSING purposes.
+ * Recognises all legacy separators (" | ", ": ") as well as the current
+ * ones (" - ", " ") so old collection names are stripped cleanly when
+ * renumbering after a separator change.
  *
- * Order matters — " | " and ": " must be checked before " " to avoid
- * a bare space match eating the first char of those separators.
+ * Order matters — multi-char separators must come before bare space.
  */
-const PREFIX_PATTERN = /^(\d+(?:\.\d+)*)( - | )/;
+const PREFIX_PATTERN = /^(\d+(?:\.\d+)*)( \| | - |: | )/;
 
 export interface ParsedName {
   prefix: string | null;
