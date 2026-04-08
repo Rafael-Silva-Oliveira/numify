@@ -335,15 +335,16 @@ async function renumberAllLibraries(): Promise<void> {
  * changing either setting immediately renumbers all collections.
  */
 export function registerPrefObservers(): void {
+  // Use full absolute keys with global=true to match what the prefs pane writes
   const sepSym = Zotero.Prefs.registerObserver(
-    "numify.separator",
+    "extensions.zotero.numify.separator",
     () => { renumberAllLibraries(); },
-    false
+    true
   );
   const depthSym = Zotero.Prefs.registerObserver(
-    "numify.maxDepth",
+    "extensions.zotero.numify.maxDepth",
     () => { renumberAllLibraries(); },
-    false
+    true
   );
   _prefObservers = [sepSym, depthSym];
   Zotero.debug("[Numify] Pref observers registered");

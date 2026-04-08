@@ -1,25 +1,22 @@
 /* global Zotero */
 "use strict";
 
-// This script is loaded into the Zotero preferences window context via the
-// scripts[] option of PreferencePanes.register(). In this context, Zotero
-// and document are fully available.
+// Full pref keys — avoids any ambiguity with branch scoping
+const PREF_MAX_DEPTH = "extensions.zotero.numify.maxDepth";
+const PREF_SEPARATOR = "extensions.zotero.numify.separator";
 
 (function initNumifyPrefs() {
-  // The pane fragment may not be rendered yet when this script first runs,
-  // so we poll until the elements exist.
   function setup() {
     const depthInput = document.getElementById("numify-maxDepth");
     const sepList = document.getElementById("numify-separator");
 
     if (!depthInput || !sepList) {
-      // Pane not yet inserted — retry on next tick
       window.setTimeout(setup, 50);
       return;
     }
 
-    // --- maxDepth: read and populate ---
-    const storedDepth = Zotero.Prefs.get("numify.maxDepth");
+    // --- maxDepth ---
+    const storedDepth = Zotero.Prefs.get(PREF_MAX_DEPTH, true);
     depthInput.value = (typeof storedDepth === "number" && storedDepth >= 1)
       ? storedDepth
       : 6;
@@ -27,14 +24,14 @@
     const saveDepth = function () {
       const val = parseInt(depthInput.value, 10);
       if (!isNaN(val) && val >= 1 && val <= 20) {
-        Zotero.Prefs.set("numify.maxDepth", val);
+        Zotero.Prefs.set(PREF_MAX_DEPTH, val, true);
       }
     };
     depthInput.addEventListener("input", saveDepth);
     depthInput.addEventListener("change", saveDepth);
 
-    // --- separator: read and select matching item ---
-    const storedSep = Zotero.Prefs.get("numify.separator");
+    // --- separator ---
+    const storedSep = Zotero.Prefs.get(PREF_SEPARATOR, true);
     const sep = (typeof storedSep === "string" && storedSep.length > 0)
       ? storedSep
       : " ";
@@ -49,7 +46,7 @@
 
     sepList.addEventListener("command", function () {
       if (sepList.value) {
-        Zotero.Prefs.set("numify.separator", sepList.value);
+        Zotero.Prefs.set(PREF_SEPARATOR, sepList.value, true);
       }
     });
   }
