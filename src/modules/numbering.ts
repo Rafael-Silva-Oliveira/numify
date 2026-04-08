@@ -167,7 +167,8 @@ export async function renumberSiblings(
     }
 
     // Always recurse so descendants are also corrected
-    await renumberChildren(sib);
+    // Pass depth+1 explicitly so stripped collections don't reset the counter
+    await renumberChildren(sib, depth + 1);
   }
 }
 
@@ -217,24 +218,28 @@ export async function reorderByUserPrefix(
 
 /**
  * Recursively renumber all descendants of a collection.
- * Called after a collection's prefix changes to propagate the new path.
- * Also enforces maxDepth on descendants.
+ * `depth` is the depth of the children being processed (parent depth + 1).
+ * Passed explicitly so stripped collections don't reset the depth counter
+ * when their prefix is null.
  */
 export async function renumberChildren(
-  collection: Zotero.Collection
+  collection: Zotero.Collection,
+  depth: number
 ): Promise<void> {
   const children = collection.getChildCollections(false) || [];
   if (children.length === 0) return;
 
   const { maxDepth } = getSettings();
+  // Use the collection's current prefix to build children's prefixes,
+  // but only if this depth is within the allowed range.
   const parentPrefix = parseName(collection.name).prefix;
-  const depth = prefixDepth(parentPrefix);
 
   for (let i = 0; i < children.length; i++) {
     const child = children[i];
     const { baseName } = parseName(child.name);
 
     if (depth > maxDepth) {
+      // Strip prefix — this level and all below are beyond max depth
       if (child.name !== baseName) {
         child.name = baseName;
         await child.saveTx({ skipNotifier: true });
@@ -248,7 +253,8 @@ export async function renumberChildren(
       }
     }
 
-    await renumberChildren(child);
+    // depth+1 for grandchildren — always explicit, never inferred from name
+    await renumberChildren(child, depth + 1);
   }
 }
 
