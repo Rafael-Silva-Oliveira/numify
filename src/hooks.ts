@@ -27,6 +27,7 @@ async function onStartup() {
     src: rootURI + "content/preferences.xhtml",
     label: "Numify",
     image: `chrome://numify/content/icons/favicon@0.5x.png`,
+    scripts: [rootURI + "content/preferences.js"],
   });
 
   // Build initial caches from all existing collections
