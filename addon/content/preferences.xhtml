@@ -1,7 +1,6 @@
 <groupbox
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  onload="Zotero.Numify.hooks.onPrefsLoad(window)"
 >
   <label><html:h2 style="margin: 0 0 16px 0; font-size: 16px;">Numify Settings</html:h2></label>
 
@@ -24,10 +23,7 @@
   <!-- Separator -->
   <hbox align="center">
     <label value="Separator:" style="min-width: 150px;"/>
-    <menulist
-      id="numify-separator"
-      style="margin-left: 8px;"
-    >
+    <menulist id="numify-separator" style="margin-left: 8px;">
       <menupopup>
         <menuitem label="Space  —  1.2.3 My Collection"   value=" "  />
         <menuitem label="Pipe   —  1.2.3 | My Collection" value=" | "/>
@@ -35,4 +31,58 @@
       </menupopup>
     </menulist>
   </hbox>
+
+  <html:script><![CDATA[
+    (function () {
+      // Wait for the document to be ready before manipulating DOM
+      function init() {
+        const Prefs = window.Zotero?.Prefs || Components.classes["@mozilla.org/zotero;1"]
+          .getService(Components.interfaces.nsISupports).wrappedJSObject.Prefs;
+
+        // --- maxDepth ---
+        const depthInput = document.getElementById("numify-maxDepth");
+        if (depthInput) {
+          const stored = Prefs.get("numify.maxDepth");
+          depthInput.value = (typeof stored === "number" && stored >= 1) ? stored : 6;
+
+          const saveDepth = function () {
+            const val = parseInt(depthInput.value, 10);
+            if (!isNaN(val) && val >= 1 && val <= 20) {
+              Prefs.set("numify.maxDepth", val);
+            }
+          };
+          depthInput.addEventListener("input", saveDepth);
+          depthInput.addEventListener("change", saveDepth);
+        }
+
+        // --- separator ---
+        const sepList = document.getElementById("numify-separator");
+        if (sepList) {
+          const stored = Prefs.get("numify.separator");
+          const sep = (typeof stored === "string" && stored.length) ? stored : " ";
+
+          const items = sepList.querySelectorAll("menuitem");
+          for (const item of items) {
+            if (item.getAttribute("value") === sep) {
+              sepList.selectedItem = item;
+              break;
+            }
+          }
+
+          sepList.addEventListener("command", function () {
+            if (sepList.value) {
+              Prefs.set("numify.separator", sepList.value);
+            }
+          });
+        }
+      }
+
+      // The pane fragment is injected into the prefs document — run after paint
+      if (document.readyState === "complete") {
+        init();
+      } else {
+        window.addEventListener("load", init, { once: true });
+      }
+    })();
+  ]]></html:script>
 </groupbox>
