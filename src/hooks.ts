@@ -85,12 +85,15 @@ function onPrefsLoad(window: Window) {
     const stored = Zotero.Prefs.get("numify.maxDepth");
     depthInput.value = String(typeof stored === "number" ? stored : 6);
 
-    depthInput.addEventListener("change", () => {
+    // "input" fires on every keystroke/spin; "change" fires on blur
+    const saveDepth = () => {
       const val = parseInt(depthInput.value, 10);
       if (!isNaN(val) && val >= 1 && val <= 20) {
         Zotero.Prefs.set("numify.maxDepth", val);
       }
-    });
+    };
+    depthInput.addEventListener("input", saveDepth);
+    depthInput.addEventListener("change", saveDepth);
   }
 
   // --- separator ---
