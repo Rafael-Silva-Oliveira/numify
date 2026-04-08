@@ -56,6 +56,8 @@ Library
 
 ## Usage
 
+**Note**: If you are using an external storage other than Zoteros default, I recommend using [ZotMoov](https://github.com/wileyyugioh/zotmoov) to sync your collections across devices.
+
 ### Creating collections
 
 When you create a new collection, Numify automatically assigns the next available prefix.
