@@ -69,9 +69,57 @@ function onShutdown() {
   Zotero.debug("[Numify] Shut down");
 }
 
+/**
+ * Called when the Numify preferences pane loads.
+ * Manually syncs the UI controls with the stored pref values,
+ * and binds change events to write back to prefs immediately.
+ * This is needed because html:input doesn't support preference= binding
+ * and XUL textbox type=number binding can be unreliable.
+ */
+function onPrefsLoad(window: Window) {
+  const doc = window.document;
+
+  // --- maxDepth ---
+  const depthInput = doc.getElementById("numify-maxDepth") as any;
+  if (depthInput) {
+    const stored = Zotero.Prefs.get("numify.maxDepth");
+    depthInput.value = String(typeof stored === "number" ? stored : 6);
+
+    depthInput.addEventListener("change", () => {
+      const val = parseInt(depthInput.value, 10);
+      if (!isNaN(val) && val >= 1 && val <= 20) {
+        Zotero.Prefs.set("numify.maxDepth", val);
+      }
+    });
+  }
+
+  // --- separator ---
+  const sepList = doc.getElementById("numify-separator") as any;
+  if (sepList) {
+    const stored = Zotero.Prefs.get("numify.separator");
+    const sep = typeof stored === "string" ? stored : " ";
+    // Set the selected item by matching value
+    const items = sepList.querySelectorAll("menuitem");
+    for (const item of items) {
+      if (item.getAttribute("value") === sep) {
+        sepList.selectedItem = item;
+        break;
+      }
+    }
+
+    sepList.addEventListener("command", () => {
+      const val = sepList.value;
+      if (val) {
+        Zotero.Prefs.set("numify.separator", val);
+      }
+    });
+  }
+}
+
 export default {
   onStartup,
   onMainWindowLoad,
   onMainWindowUnload,
   onShutdown,
+  onPrefsLoad,
 };

@@ -1,31 +1,33 @@
 <groupbox
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
+  onload="Zotero.Numify.hooks.onPrefsLoad(window)"
 >
-  <label><html:h2 style="margin: 0 0 12px 0; font-size: 16px;">Numify Settings</html:h2></label>
+  <label><html:h2 style="margin: 0 0 16px 0; font-size: 16px;">Numify Settings</html:h2></label>
 
   <!-- Max Depth -->
   <hbox align="center" style="margin-bottom: 4px;">
-    <label value="Max depth (1–20):" style="min-width: 140px;"/>
-    <html:input
-      type="number"
+    <label value="Max depth (1–20):" style="min-width: 150px;"/>
+    <textbox
       id="numify-maxDepth"
-      preference="extensions.zotero.numify.maxDepth"
+      type="number"
+      preference="maxDepth"
       min="1"
       max="20"
-      style="width: 64px; margin-left: 8px;"
+      size="4"
+      style="margin-left: 8px;"
     />
   </hbox>
-  <description style="font-size: 11px; color: gray; margin: 0 0 16px 0;">
+  <description style="font-size: 11px; color: gray; margin: 0 0 16px 4px;">
     Collections deeper than this level will not receive a numeric prefix.
   </description>
 
   <!-- Separator -->
   <hbox align="center">
-    <label value="Separator:" style="min-width: 140px;"/>
+    <label value="Separator:" style="min-width: 150px;"/>
     <menulist
       id="numify-separator"
-      preference="extensions.zotero.numify.separator"
+      preference="separator"
       style="margin-left: 8px;"
     >
       <menupopup>
