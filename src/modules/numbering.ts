@@ -17,7 +17,7 @@
  * Order matters — " | " and ": " must be checked before " " to avoid
  * a bare space match eating the first char of those separators.
  */
-const PREFIX_PATTERN = /^(\d+(?:\.\d+)*)( \| |: | )/;
+const PREFIX_PATTERN = /^(\d+(?:\.\d+)*)( - | )/;
 
 export interface ParsedName {
   prefix: string | null;

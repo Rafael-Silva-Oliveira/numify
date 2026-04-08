@@ -131,8 +131,7 @@ The character placed between the numeric prefix and the collection name. Choose 
 | Option | Example |
 |--------|---------|
 | Space (default) | `1.2.3 My Collection` |
-| Pipe | `1.2.3 \| My Collection` |
-| Colon | `1.2.3: My Collection` |
+| Dash | `1.2.3 - My Collection` |
 
 Changing the separator immediately renames all collections in your library to use the new format.
 
