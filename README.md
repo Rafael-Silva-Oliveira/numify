@@ -33,12 +33,6 @@ Library
 
 - **Zotero 7.0 or later** — Download from [zotero.org](https://www.zotero.org/download/)
 
-| Zotero Version | Supported |
-|----------------|-----------|
-| Zotero 7       | Yes       |
-| Zotero 8       | Yes       |
-| Zotero 6       | No        |
-
 ## Installation
 
 1. Download the latest `numify.xpi` from the [Releases](https://github.com/Rafael-Silva-Oliveira/numify/releases/latest) page
