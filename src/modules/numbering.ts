@@ -30,11 +30,13 @@ export interface ParsedName {
  * ambiguity across different Zotero contexts (main window vs pref pane).
  */
 function getSettings(): { maxDepth: number; separator: string } {
-  const maxDepth = Zotero.Prefs.get("extensions.zotero.numify.maxDepth", true);
-  const separator = Zotero.Prefs.get("extensions.zotero.numify.separator", true);
+  const rawDepth = Zotero.Prefs.get("extensions.zotero.numify.maxDepth", true);
+  const rawSep = Zotero.Prefs.get("extensions.zotero.numify.separator", true);
+  // Prefs may come back as string or number depending on context — coerce both
+  const maxDepth = parseInt(String(rawDepth), 10);
   return {
-    maxDepth: typeof maxDepth === "number" && maxDepth >= 1 ? maxDepth : 6,
-    separator: typeof separator === "string" && separator.length > 0 ? separator : " ",
+    maxDepth: !isNaN(maxDepth) && maxDepth >= 1 ? maxDepth : 6,
+    separator: typeof rawSep === "string" && rawSep.length > 0 ? rawSep : " ",
   };
 }
 
