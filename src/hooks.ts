@@ -17,24 +17,33 @@ async function onStartup() {
 
   Zotero.debug("[Numify] Starting up...");
 
+  // Register the preferences pane in Zotero Settings
+  const addon = getAddon();
+  const rootURI = addon.data.rootURI;
+  await Zotero.PreferencePanes.register({
+    pluginID: "numify@zotero-plugin.dev",
+    src: rootURI + "content/preferences.xhtml",
+    label: "Numify",
+    image: `chrome://numify/content/icons/favicon@0.5x.png`,
+  });
+
   // Build initial caches from all existing collections
   buildCaches();
 
   // Register collection observer
   registerCollectionObserver();
 
-  const addon = getAddon();
   addon.data.initialized = true;
 
   Zotero.debug("[Numify] Started successfully");
 }
 
 function onMainWindowLoad(_window: Window) {
-  // No UI to register
+  // No additional UI
 }
 
 function onMainWindowUnload(_window: Window) {
-  // No UI to clean up
+  // No additional UI to clean up
 }
 
 function onShutdown() {

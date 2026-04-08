@@ -6,6 +6,7 @@ class Addon {
     observerID: null as string | null,
     parentCache: new Map<number, number | null>(),
     nameCache: new Map<number, string>(),
+    rootURI: "" as string,
   };
   public hooks = hooks;
 }
