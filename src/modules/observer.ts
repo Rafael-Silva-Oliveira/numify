@@ -14,6 +14,7 @@ import {
 
 let observerID: string | null = null;
 let _isRenumbering = false;
+let _prefObservers: symbol[] = [];
 
 function getAddon() {
   return (Zotero as any).Numify;
@@ -304,4 +305,57 @@ export function unregisterCollectionObserver(): void {
     Zotero.debug(`[Numify] Observer unregistered (id=${observerID})`);
     observerID = null;
   }
+}
+
+/**
+ * Renumber ALL top-level collections across all libraries.
+ * Called when a setting (separator or maxDepth) changes so the
+ * new setting is immediately reflected in existing collection names.
+ */
+async function renumberAllLibraries(): Promise<void> {
+  if (_isRenumbering) return;
+  _isRenumbering = true;
+  Zotero.debug("[Numify] Settings changed — renumbering all collections");
+  try {
+    const libraries = Zotero.Libraries.getAll();
+    for (const lib of libraries) {
+      await renumberSiblings(null, lib.libraryID);
+    }
+    // Rebuild name cache to reflect new names
+    buildCaches();
+  } catch (err) {
+    Zotero.debug(`[Numify] Error during full renumber: ${err}`);
+  } finally {
+    _isRenumbering = false;
+  }
+}
+
+/**
+ * Register observers on the separator and maxDepth preferences so that
+ * changing either setting immediately renumbers all collections.
+ */
+export function registerPrefObservers(): void {
+  const sepSym = Zotero.Prefs.registerObserver(
+    "numify.separator",
+    () => { renumberAllLibraries(); },
+    false
+  );
+  const depthSym = Zotero.Prefs.registerObserver(
+    "numify.maxDepth",
+    () => { renumberAllLibraries(); },
+    false
+  );
+  _prefObservers = [sepSym, depthSym];
+  Zotero.debug("[Numify] Pref observers registered");
+}
+
+/**
+ * Unregister pref observers on shutdown.
+ */
+export function unregisterPrefObservers(): void {
+  for (const sym of _prefObservers) {
+    Zotero.Prefs.unregisterObserver(sym);
+  }
+  _prefObservers = [];
+  Zotero.debug("[Numify] Pref observers unregistered");
 }

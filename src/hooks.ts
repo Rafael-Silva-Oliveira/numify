@@ -1,6 +1,8 @@
 import {
   registerCollectionObserver,
   unregisterCollectionObserver,
+  registerPrefObservers,
+  unregisterPrefObservers,
   buildCaches,
 } from "./modules/observer";
 
@@ -33,6 +35,9 @@ async function onStartup() {
   // Register collection observer
   registerCollectionObserver();
 
+  // Register pref observers so separator/maxDepth changes renumber immediately
+  registerPrefObservers();
+
   addon.data.initialized = true;
 
   Zotero.debug("[Numify] Started successfully");
@@ -50,6 +55,7 @@ function onShutdown() {
   Zotero.debug("[Numify] Shutting down...");
 
   unregisterCollectionObserver();
+  unregisterPrefObservers();
 
   const addon = getAddon();
   if (addon) {

@@ -89,6 +89,8 @@ declare namespace Zotero {
     function get(pref: string, global?: boolean): boolean | string | number | undefined;
     function set(pref: string, value: boolean | string | number, global?: boolean): any;
     function clear(pref: string, global?: boolean): void;
+    function registerObserver(name: string, handler: Function, global?: boolean): symbol;
+    function unregisterObserver(symbol: symbol): void;
   }
 }
 

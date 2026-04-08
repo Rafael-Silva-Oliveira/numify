@@ -26,16 +26,15 @@ export interface ParsedName {
 
 /**
  * Read the current settings from Zotero preferences.
- * Falls back to defaults if prefs are not set.
+ * Zotero.Prefs.get() is scoped to "extensions.zotero" automatically,
+ * so we pass only the plugin-relative key.
  */
 function getSettings(): { maxDepth: number; separator: string } {
-  const maxDepth =
-    (Zotero.Prefs.get("extensions.zotero.numify.maxDepth") as number) ?? 6;
-  const separator =
-    (Zotero.Prefs.get("extensions.zotero.numify.separator") as string) ?? " ";
+  const maxDepth = Zotero.Prefs.get("numify.maxDepth");
+  const separator = Zotero.Prefs.get("numify.separator");
   return {
-    maxDepth: typeof maxDepth === "number" ? maxDepth : 6,
-    separator: typeof separator === "string" ? separator : " ",
+    maxDepth: typeof maxDepth === "number" && maxDepth >= 1 ? maxDepth : 6,
+    separator: typeof separator === "string" && separator.length > 0 ? separator : " ",
   };
 }
 
