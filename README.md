@@ -10,11 +10,15 @@ Numify automatically adds **hierarchical numeric prefixes** to your Zotero colle
 
 - **Auto-prefix on creation** — New collections and sub-collections are instantly numbered
 - **Configurable depth** — Set how many levels deep the prefix goes (1–20)
-- **Custom separator** — Choose between space, pipe (`|`), or colon (`:`)
+- **Custom separator** — Choose between space or dash (-).
 - **Reorder by renaming** — Change a prefix to move a collection to a new position
 - **Gap-free numbering** — Deleting a collection renumbers remaining siblings automatically
 - **Rename-safe** — Change the base name and your prefix is preserved
 - **Syncs across devices** — Prefixes are stored in the collection name, so Zotero syncs them natively
+
+
+## Future releases
+- **More sorting strings** - Different methods to sort collections (A.B.C.D, a.b.c.d, I.II.III.IV, i.ii.iii.iv, etc)
 
 ```
 Library
