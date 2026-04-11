@@ -29,14 +29,16 @@ export interface ParsedName {
  * Use full absolute keys with global=true to avoid any branch-scoping
  * ambiguity across different Zotero contexts (main window vs pref pane).
  */
-function getSettings(): { maxDepth: number; separator: string } {
+function getSettings(): { maxDepth: number; separator: string; padZero: boolean } {
   const rawDepth = Zotero.Prefs.get("extensions.zotero.numify.maxDepth", true);
   const rawSep = Zotero.Prefs.get("extensions.zotero.numify.separator", true);
+  const rawPadZero = Zotero.Prefs.get("extensions.zotero.numify.padZero", true);
   // Prefs may come back as string or number depending on context — coerce both
   const maxDepth = parseInt(String(rawDepth), 10);
   return {
     maxDepth: !isNaN(maxDepth) && maxDepth >= 1 ? maxDepth : 6,
     separator: typeof rawSep === "string" && rawSep.length > 0 ? rawSep : " ",
+    padZero: rawPadZero === true,
   };
 }
 
@@ -81,7 +83,15 @@ export function computePrefix(
   positionIndex: number
 ): string {
   if (parentPrefix) {
-    return `${parentPrefix}.${positionIndex}`;
+    // Strip any leading zero from the parent prefix so sub-collections
+    // use unpadded numbering (e.g. "1.1" under "01 PhD", not "01.1")
+    const unpadded = parentPrefix.replace(/^0+(\d)/, "$1");
+    return `${unpadded}.${positionIndex}`;
+  }
+  // Top-level: optionally pad single-digit positions with a leading zero
+  const { padZero } = getSettings();
+  if (padZero && positionIndex < 10) {
+    return String(positionIndex).padStart(2, "0");
   }
   return `${positionIndex}`;
 }

@@ -3,13 +3,15 @@
 
 const PREF_MAX_DEPTH = "extensions.zotero.numify.maxDepth";
 const PREF_SEPARATOR = "extensions.zotero.numify.separator";
+const PREF_PAD_ZERO = "extensions.zotero.numify.padZero";
 
 (function initNumifyPrefs() {
   function setup() {
     const depthInput = document.getElementById("numify-maxDepth");
     const sepList = document.getElementById("numify-separator");
+    const padZeroCheckbox = document.getElementById("numify-padZero");
 
-    if (!depthInput || !sepList) {
+    if (!depthInput || !sepList || !padZeroCheckbox) {
       window.setTimeout(setup, 50);
       return;
     }
@@ -47,6 +49,14 @@ const PREF_SEPARATOR = "extensions.zotero.numify.separator";
       if (sepList.value) {
         Zotero.Prefs.set(PREF_SEPARATOR, sepList.value, true);
       }
+    });
+
+    // --- padZero ---
+    const storedPadZero = Zotero.Prefs.get(PREF_PAD_ZERO, true);
+    padZeroCheckbox.checked = storedPadZero === true;
+
+    padZeroCheckbox.addEventListener("command", function () {
+      Zotero.Prefs.set(PREF_PAD_ZERO, padZeroCheckbox.checked, true);
     });
   }
 

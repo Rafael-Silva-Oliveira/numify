@@ -346,7 +346,12 @@ export function registerPrefObservers(): void {
     () => { renumberAllLibraries(); },
     true
   );
-  _prefObservers = [sepSym, depthSym];
+  const padZeroSym = Zotero.Prefs.registerObserver(
+    "extensions.zotero.numify.padZero",
+    () => { renumberAllLibraries(); },
+    true
+  );
+  _prefObservers = [sepSym, depthSym, padZeroSym];
   Zotero.debug("[Numify] Pref observers registered");
 }
 
