@@ -13,7 +13,7 @@
       "id": "__addonID__",
       "update_url": "https://raw.githubusercontent.com/Rafael-Silva-Oliveira/numify/main/update.json",
       "strict_min_version": "6.999",
-      "strict_max_version": "8.*"
+      "strict_max_version": "9.*"
     }
   }
 }
