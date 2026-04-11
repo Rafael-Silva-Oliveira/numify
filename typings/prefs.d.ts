@@ -10,6 +10,7 @@ declare namespace _ZoteroTypes {
       "enable": boolean;
       "maxDepth": number;
       "separator": string;
+      "padZero": boolean;
     };
   }
 }

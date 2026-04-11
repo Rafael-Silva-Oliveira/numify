@@ -15,6 +15,7 @@ Numify automatically adds **hierarchical numeric prefixes** to your Zotero colle
 - **Gap-free numbering** — Deleting a collection renumbers remaining siblings automatically
 - **Rename-safe** — Change the base name and your prefix is preserved
 - **Syncs across devices** — Prefixes are stored in the collection name, so Zotero syncs them natively
+- **Leading zero padding** — Optionally pad top-level prefixes 1–9 as 01–09 for correct alphabetical sorting (useful for Zotero Android)
 
 
 ## Future releases
@@ -134,6 +135,17 @@ The character placed between the numeric prefix and the collection name. Choose 
 | Dash | `1.2.3 - My Collection` |
 
 Changing the separator immediately renames all collections in your library to use the new format.
+
+### Leading zero
+
+When enabled, top-level prefixes 1–9 are padded to 01–09. This ensures collections sort correctly in apps that use alphabetical ordering, such as Zotero for Android. Sub-collections use unpadded numbering (1.1, 1.2.3, etc.).
+
+| Setting       | Top-level     | Sub-collection |
+|---------------|---------------|----------------|
+| Off (default) | `1 Physics`   | `1.1 Quantum`  |
+| On            | `01 Physics`  | `1.1 Quantum`  |
+
+> **Desktop users:** Set collection sort to "No Sort" (right-click the column header) to keep collections in their numeric order.
 
 ## How it works
 

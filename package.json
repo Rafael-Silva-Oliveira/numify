@@ -1,6 +1,6 @@
 {
   "name": "numify",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Auto-number Zotero collections with hierarchical prefixes",
   "config": {
     "addonName": "Numify",
@@ -15,7 +15,7 @@
     "lint": "prettier --write . && eslint --fix .",
     "release": "zotero-plugin release"
   },
-  "author": "rafae",
+  "author": "rafael-oliveira",
   "license": "MIT",
   "repository": {
     "type": "git",
