@@ -5,7 +5,7 @@
         {
           "version": "0.3.0",
           "update_link": "https://github.com/Rafael-Silva-Oliveira/numify/releases/download/v0.3.0/numify.xpi",
-          "update_hash": "sha512:deb027fccb01a1d6fc22d3e9bd5dbb9989275b62e0942f3ee73d2faf8378d8255bec568af4d796b15373c5085c13456cad6c9e569648405ba0281dfefcad2424",
+          "update_hash": "sha512:200cfa62c7c0096114adc930baa998123c8760b1781989b60661fe95af2d9eb0a16d15cb14dff3f4bc839ded01405487f6298479618cccd709b9ce9bb7fbcf5d",
           "applications": {
             "zotero": {
               "strict_min_version": "6.999",
