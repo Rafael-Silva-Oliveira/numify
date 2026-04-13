@@ -145,7 +145,6 @@ When enabled, top-level prefixes 1–9 are padded to 01–09. This ensures colle
 | Off (default) | `1 Physics`   | `1.1 Quantum`  |
 | On            | `01 Physics`  | `1.1 Quantum`  |
 
-> **Desktop users:** Set collection sort to "No Sort" (right-click the column header) to keep collections in their numeric order.
 
 ## How it works
 
