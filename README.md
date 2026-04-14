@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="promo.png" alt="Numify — Auto-number your Zotero collections" width="640">
+  <img src="promo.svg" alt="Numify — Auto-number your Zotero collections" width="640">
 </p>
 
 ---
