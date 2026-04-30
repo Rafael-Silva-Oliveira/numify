@@ -2,7 +2,7 @@
   <img src="promo.svg" alt="Numify — Auto-number your Zotero collections" width="640">
 </p>
 
-<p align="center">x
+<p align="center">
   <a href="https://github.com/Rafael-Silva-Oliveira/numify/releases"><img src="https://img.shields.io/github/downloads/Rafael-Silva-Oliveira/numify/total?label=downloads&logo=github" alt="GitHub all releases"></a>
   <a href="https://github.com/Rafael-Silva-Oliveira/numify/releases/latest"><img src="https://img.shields.io/github/v/release/Rafael-Silva-Oliveira/numify?label=latest&logo=github" alt="Latest release"></a>
   <a href="https://github.com/Rafael-Silva-Oliveira/numify/releases/latest"><img src="https://img.shields.io/github/downloads/Rafael-Silva-Oliveira/numify/latest/total?label=latest%20downloads&logo=github" alt="Latest release downloads"></a>
