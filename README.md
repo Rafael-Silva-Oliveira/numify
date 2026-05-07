@@ -7,7 +7,6 @@
   <a href="https://github.com/Rafael-Silva-Oliveira/numify/releases/latest"><img src="https://img.shields.io/github/v/release/Rafael-Silva-Oliveira/numify?label=latest&logo=github" alt="Latest release"></a>
   <a href="https://github.com/Rafael-Silva-Oliveira/numify/releases/latest"><img src="https://img.shields.io/github/downloads/Rafael-Silva-Oliveira/numify/latest/total?label=latest%20downloads&logo=github" alt="Latest release downloads"></a>
 </p>
----
 
 Numify automatically adds **hierarchical numeric prefixes** to your Zotero collection names. Create, rename, delete, or reorder collections — the numbering stays in sync.
 
