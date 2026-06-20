@@ -164,14 +164,6 @@ Numify uses Zotero's [Notifier API](https://www.zotero.org/support/dev/client_co
 
 All renaming is done with `skipNotifier: true` to prevent infinite loops. An in-memory cache tracks parent IDs and names to detect moves vs. reorder intents.
 
-## Development
-
-```bash
-# Start dev mode with hot-reload
-npm start
-```
-
-This watches for changes and auto-reloads the plugin in Zotero.
 
 ## License
 
