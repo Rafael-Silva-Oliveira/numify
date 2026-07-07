@@ -151,10 +151,6 @@ When enabled, top-level prefixes 1–9 are padded to 01–09. This ensures colle
 | On            | `01 Physics`  | `1.1 Quantum`  |
 
 
-## How it works
-
-Numify uses Zotero's [Notifier API](https://www.zotero.org/support/dev/client_coding/javascript_api) to listen for collection events:
-
 | Event | What happens |
 |-------|-------------|
 | **Create** | New collection is assigned the next prefix; all siblings are renumbered |
