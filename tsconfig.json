@@ -15,5 +15,6 @@
     },
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "typings/**/*.d.ts"]
+  "include": ["src/**/*.ts", "typings/**/*.d.ts"],
+  "exclude": ["typings/i10n.d.ts"]
 }
