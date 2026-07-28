@@ -29,7 +29,11 @@ export interface ParsedName {
  * Use full absolute keys with global=true to avoid any branch-scoping
  * ambiguity across different Zotero contexts (main window vs pref pane).
  */
-function getSettings(): { maxDepth: number; separator: string; padZero: boolean } {
+function getSettings(): {
+  maxDepth: number;
+  separator: string;
+  padZero: boolean;
+} {
   const rawDepth = Zotero.Prefs.get("extensions.zotero.numify.maxDepth", true);
   const rawSep = Zotero.Prefs.get("extensions.zotero.numify.separator", true);
   const rawPadZero = Zotero.Prefs.get("extensions.zotero.numify.padZero", true);
@@ -80,7 +84,7 @@ export function buildName(prefix: string, baseName: string): string {
  */
 export function computePrefix(
   parentPrefix: string | null,
-  positionIndex: number
+  positionIndex: number,
 ): string {
   if (parentPrefix) {
     // Strip any leading zero from the parent prefix so sub-collections
@@ -97,12 +101,16 @@ export function computePrefix(
 }
 
 /**
- * Get sibling collections for a given parent.
+ * Get sibling collections for a given parent (raw, in Zotero internal order).
  * If parentID is falsy, returns top-level collections for the library.
+ *
+ * NOTE: callers should generally use {@link getSiblings} (prefix-sorted)
+ * so renumbering preserves the order the user sees, not Zotero's internal
+ * creation/ID order.
  */
-function getSiblings(
+function getRawSiblings(
   parentID: number | false | null,
-  libraryID: number
+  libraryID: number,
 ): Zotero.Collection[] {
   if (!parentID) {
     const all = Zotero.Collections.getByLibrary(libraryID);
@@ -114,12 +122,82 @@ function getSiblings(
 }
 
 /**
+ * Convert a prefix string ("1.2.3") to numeric segments ([1,2,3]).
+ * Returns null for an unprefixed/invalid key.
+ */
+function prefixKeyToSegments(key: string | null): number[] | null {
+  if (!key) return null;
+  const parts = key.split(".");
+  const nums = parts.map((p) => parseInt(p, 10));
+  if (nums.some((n) => isNaN(n))) return null;
+  return nums;
+}
+
+/**
+ * Compare two prefix keys (each a dotted numeric string or null).
+ * Order: prefixed collections first (by numeric segments, shorter first),
+ * unprefixed collections last. This makes "1.10" sort AFTER "1.2" and
+ * "1.2" sort BEFORE "1.2.1", matching the numeric hierarchy the user sees.
+ */
+export function comparePrefixKeys(a: string | null, b: string | null): number {
+  const sa = prefixKeyToSegments(a);
+  const sb = prefixKeyToSegments(b);
+  if (sa === null && sb === null) return 0;
+  if (sa === null) return 1; // unprefixed sorts after prefixed
+  if (sb === null) return -1;
+  const len = Math.min(sa.length, sb.length);
+  for (let i = 0; i < len; i++) {
+    if (sa[i] !== sb[i]) return sa[i] - sb[i];
+  }
+  return sa.length - sb.length; // shorter prefix first: 1.2 before 1.2.1
+}
+
+/**
+ * Sort a list of collections by the numeric prefix embedded in their names,
+ * giving the order the user actually sees (not Zotero's internal ID order).
+ *
+ * `overrides` lets a caller supply a different prefix for specific ids — used
+ * by the reorder path to position a just-renamed collection at its *previous*
+ * slot before splicing it to the desired position (avoids prefix collisions
+ * with the displaced sibling).
+ *
+ * The sort is stable: ties (e.g. two unprefixed, or equal prefixes) break by
+ * collection id so the result is deterministic across runs/sessions.
+ */
+export function sortByPrefix(
+  collections: Zotero.Collection[],
+  overrides?: Map<number, string | null>,
+): Zotero.Collection[] {
+  const getKey = (col: Zotero.Collection): string | null => {
+    if (overrides && overrides.has(col.id)) {
+      return overrides.get(col.id) ?? null;
+    }
+    return parseName(col.name).prefix;
+  };
+  return collections.slice().sort((a, b) => {
+    const c = comparePrefixKeys(getKey(a), getKey(b));
+    if (c !== 0) return c;
+    return a.id - b.id; // stable tie-break
+  });
+}
+
+/**
+ * Get sibling collections for a given parent, sorted by prefix so that
+ * renumbering preserves the order the user sees. If parentID is falsy,
+ * returns top-level collections for the library.
+ */
+function getSiblings(
+  parentID: number | false | null,
+  libraryID: number,
+): Zotero.Collection[] {
+  return sortByPrefix(getRawSiblings(parentID, libraryID));
+}
+
+/**
  * Get the prefix of a collection's parent.
  * Returns null for top-level collections.
  */
-function getParentPrefix(
-  parentID: number | false | null
-): string | null {
+function getParentPrefix(parentID: number | false | null): string | null {
   if (!parentID) return null;
   const parent = Zotero.Collections.get(parentID);
   if (!parent) return null;
@@ -150,7 +228,7 @@ function prefixDepth(parentPrefix: string | null): number {
 export async function renumberSiblings(
   parentID: number | false | null,
   libraryID: number,
-  orderedSiblings?: Zotero.Collection[]
+  orderedSiblings?: Zotero.Collection[],
 ): Promise<void> {
   const { maxDepth } = getSettings();
   const siblings = orderedSiblings || getSiblings(parentID, libraryID);
@@ -198,12 +276,19 @@ export function getLocalPosition(prefix: string | null): number | null {
  *
  * Example: User renames "7.1.2 B" to "7.1.1 B" → move B to position 1,
  * shifting "7.1.1 A" to become "7.1.2 A".
+ *
+ * The target collection is sorted into the list using its *old* prefix (read
+ * from the addon name cache) so it lands at its true previous slot before
+ * being spliced to the desired position. This avoids the ambiguity that
+ * occurs when the new prefix collides with the displaced sibling's prefix —
+ * which previously let Zotero's internal ID order decide, producing the
+ * unpredictable shuffling reported in issue #4.
  */
 export async function reorderByUserPrefix(
   collectionID: number,
   userPrefix: string,
   parentID: number | false | null,
-  libraryID: number
+  libraryID: number,
 ): Promise<void> {
   const desiredPos = getLocalPosition(userPrefix);
   if (desiredPos === null || desiredPos < 1) {
@@ -211,7 +296,18 @@ export async function reorderByUserPrefix(
     return;
   }
 
-  const siblings = getSiblings(parentID, libraryID);
+  // Build the siblings sorted by prefix, but use the target's OLD prefix
+  // (from the name cache) so it is placed at its previous position before we
+  // move it — independent of Zotero's internal creation/ID order.
+  const addon = (Zotero as any).Numify;
+  const oldName: string | undefined = addon?.data?.nameCache?.get(collectionID);
+  const oldPrefix = oldName ? parseName(oldName).prefix : null;
+
+  const overrides = new Map<number, string | null>();
+  if (oldName !== undefined) {
+    overrides.set(collectionID, oldPrefix);
+  }
+  const siblings = sortByPrefix(getRawSiblings(parentID, libraryID), overrides);
 
   const targetIndex = siblings.findIndex((s) => s.id === collectionID);
   if (targetIndex === -1) {
@@ -222,6 +318,13 @@ export async function reorderByUserPrefix(
   const [target] = siblings.splice(targetIndex, 1);
   const insertIndex = Math.min(desiredPos - 1, siblings.length);
   siblings.splice(insertIndex, 0, target);
+
+  Zotero.debug(
+    `[Numify] reorder: target id=${collectionID} oldPrefix=${oldPrefix} ` +
+      `desiredPos=${desiredPos} → order=${siblings
+        .map((s) => `${s.id}:${parseName(s.name).prefix ?? "-"}`)
+        .join(", ")}`,
+  );
 
   await renumberSiblings(parentID, libraryID, siblings);
 }
@@ -234,15 +337,17 @@ export async function reorderByUserPrefix(
  */
 export async function renumberChildren(
   collection: Zotero.Collection,
-  depth: number
+  depth: number,
 ): Promise<void> {
-  const children = collection.getChildCollections(false) || [];
-  if (children.length === 0) return;
-
   const { maxDepth } = getSettings();
   // Use the collection's current prefix to build children's prefixes,
   // but only if this depth is within the allowed range.
   const parentPrefix = parseName(collection.name).prefix;
+
+  // Sort children by prefix so descendant numbering preserves the order
+  // the user sees, not Zotero's internal ID order (fixes siblings being
+  // shuffled when a parent is renumbered).
+  const children = sortByPrefix(collection.getChildCollections(false) || []);
 
   for (let i = 0; i < children.length; i++) {
     const child = children[i];
@@ -274,7 +379,7 @@ export async function renumberChildren(
  */
 export async function renumberAfterMove(
   movedCollection: Zotero.Collection,
-  oldParentID: number | null
+  oldParentID: number | null,
 ): Promise<void> {
   const libraryID = movedCollection.libraryID;
 

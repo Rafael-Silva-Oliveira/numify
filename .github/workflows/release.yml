@@ -1,0 +1,94 @@
+# Release Workflow
+#
+# Triggered automatically when a version tag (vX.Y.Z) is pushed.
+#
+# Usage:
+#   1. Bump the version in package.json:
+#        "version": "X.Y.Z"
+#
+#   2. Commit and push to main:
+#        git add package.json <changed source files>
+#        git commit -m "Release vX.Y.Z: <short description>"
+#        git push origin main
+#
+#   3. Tag (must match package.json exactly, with a v prefix):
+#        git tag vX.Y.Z
+#        git push origin vX.Y.Z
+#
+# The workflow will:
+#   - Fail fast if the tag version doesn't match package.json
+#   - Build the Zotero plugin (.xpi + update.json)
+#   - Create a GitHub Release on vX.Y.Z with numify.xpi + update.json attached
+#   - Update the rolling "Update manifest" release (tag: release) so existing
+#     users on any prior version get offered this new version — every past
+#     release bakes update_url = .../releases/download/release/update.json,
+#     so that asset is the single update feed all installed copies poll.
+#
+# Artifacts attached to each release:
+#   - numify.xpi   (Zotero plugin)
+#   - update.json  (Zotero auto-update manifest, sha512 of the .xpi)
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Verify tag matches package.json version
+        run: |
+          TAG_VERSION=${GITHUB_REF_NAME#v}
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag version (v${TAG_VERSION}) does not match package.json version (${PKG_VERSION}). Bump package.json before tagging."
+            exit 1
+          fi
+          echo "Version check passed: ${PKG_VERSION}"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Zotero plugin (.xpi + update.json)
+        run: npm run build
+
+      - name: Verify build produced both artifacts
+        run: |
+          test -f .scaffold/build/numify.xpi
+          test -f .scaffold/build/update.json
+          echo "Built artifacts present:"
+          ls -la .scaffold/build/numify.xpi .scaffold/build/update.json
+
+      - name: Create GitHub Release for ${{ github.ref_name }}
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            .scaffold/build/numify.xpi
+            .scaffold/build/update.json
+
+      # Update the rolling "Update manifest" release (tag: release) so that
+      # every installed copy — whose baked-in update_url points at
+      # .../releases/download/release/update.json — discovers this new
+      # version. We upload the freshly built update.json (single latest
+      # entry with the correct sha512) over the existing asset.
+      - name: Update rolling update manifest (release tag)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload release .scaffold/build/update.json --clobber
+          echo "Rolling update manifest refreshed with version ${{ github.ref_name }}"

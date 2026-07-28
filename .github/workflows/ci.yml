@@ -1,0 +1,50 @@
+# CI Workflow
+#
+# Runs on every pull request and on pushes to main. Catches build and type
+# breakage before code lands — the repo has no other guard rail today.
+#
+# The blocking gate is `npm run build` (which packs the .xpi). A typecheck
+# runs as well. Lint is reported but non-blocking until the existing
+# prettier/eslint backlog is cleared.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Cancel an in-progress run when a newer commit is pushed to the same ref.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Packing failure (syntax/manifest error) fails the job here.
+      - name: Build plugin
+        run: npm run build
+
+      # Type errors fail the job.
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      # Reported for visibility but non-blocking until the lint backlog on
+      # main is cleared.
+      - name: Lint (non-blocking)
+        continue-on-error: true
+        run: npm run lint

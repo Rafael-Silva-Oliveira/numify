@@ -62,7 +62,7 @@ async function handleCollectionAdd(id: number): Promise<void> {
   const libraryID = collection.libraryID;
 
   Zotero.debug(
-    `[Numify] Collection added: "${collection.name}" (id=${id}, parentID=${parentID})`
+    `[Numify] Collection added: "${collection.name}" (id=${id}, parentID=${parentID})`,
   );
 
   // Renumber all siblings under this parent (includes the new one)
@@ -87,21 +87,23 @@ async function handleCollectionAdd(id: number): Promise<void> {
  */
 async function handleCollectionModify(
   id: number,
-  _extraData: any
+  _extraData: any,
 ): Promise<void> {
   const collection = Zotero.Collections.get(id);
   if (!collection) return;
 
   const parentCacheRef = getParentCache();
   const nameCacheRef = getNameCache();
-  const cachedParentID = parentCacheRef.has(id) ? parentCacheRef.get(id)! : null;
+  const cachedParentID = parentCacheRef.has(id)
+    ? parentCacheRef.get(id)!
+    : null;
   const currentParentID = collection.parentID || null;
   const cachedName = nameCacheRef.get(id) || null;
 
   if (cachedParentID !== currentParentID) {
     // It's a move — parent changed
     Zotero.debug(
-      `[Numify] Collection moved: "${collection.name}" (id=${id}, ${cachedParentID} → ${currentParentID})`
+      `[Numify] Collection moved: "${collection.name}" (id=${id}, ${cachedParentID} → ${currentParentID})`,
     );
 
     await renumberAfterMove(collection, cachedParentID);
@@ -111,35 +113,49 @@ async function handleCollectionModify(
     refreshNameCacheForParent(cachedParentID, collection.libraryID);
     refreshNameCacheForParent(currentParentID, collection.libraryID);
   } else {
-    // Same parent — check if the user changed the prefix (reorder intent)
+    // Same parent — check if the user changed the prefix (reorder intent).
+    //
+    // A deliberate reorder is a prefix-ONLY edit: the base name stays the
+    // same and only the numeric prefix changes. If the base name also
+    // changed (or one side is unprefixed), treat it as a plain rename so
+    // that sync-driven modify events and base-name edits don't get
+    // misinterpreted as reorder intents — which previously re-anchored
+    // numbering to Zotero's internal ID order and shuffled untouched
+    // siblings (issue #4: "numbering shifted on its own between sessions").
     const currentParsed = parseName(collection.name);
     const cachedParsed = cachedName ? parseName(cachedName) : null;
 
-    const oldLocalPos = cachedParsed ? getLocalPosition(cachedParsed.prefix) : null;
+    const oldLocalPos = cachedParsed
+      ? getLocalPosition(cachedParsed.prefix)
+      : null;
     const newLocalPos = getLocalPosition(currentParsed.prefix);
 
-    if (
+    const sameBaseName =
+      cachedParsed !== null && currentParsed.baseName === cachedParsed.baseName;
+    const prefixChanged =
       newLocalPos !== null &&
       oldLocalPos !== null &&
-      newLocalPos !== oldLocalPos
-    ) {
+      newLocalPos !== oldLocalPos;
+
+    if (sameBaseName && prefixChanged) {
       // User deliberately changed the prefix → reorder
       Zotero.debug(
-        `[Numify] Collection reorder: "${cachedName}" → "${collection.name}" (id=${id}, pos ${oldLocalPos} → ${newLocalPos})`
+        `[Numify] Collection reorder: "${cachedName}" → "${collection.name}" (id=${id}, pos ${oldLocalPos} → ${newLocalPos})`,
       );
 
       await reorderByUserPrefix(
         id,
         currentParsed.prefix!,
         currentParentID,
-        collection.libraryID
+        collection.libraryID,
       );
 
       refreshNameCacheForParent(currentParentID, collection.libraryID);
     } else {
-      // Simple base name rename — reapply correct prefix
+      // Simple base name rename (or sync-driven name change) — reapply
+      // the correct prefix in place, preserving existing sibling order.
       Zotero.debug(
-        `[Numify] Collection renamed: "${collection.name}" (id=${id})`
+        `[Numify] Collection renamed: "${collection.name}" (id=${id})`,
       );
 
       await renumberSiblings(currentParentID, collection.libraryID);
@@ -154,15 +170,13 @@ async function handleCollectionModify(
  */
 async function handleCollectionDelete(
   id: number,
-  extraData: any
+  extraData: any,
 ): Promise<void> {
   const parentCacheRef = getParentCache();
   const nameCacheRef = getNameCache();
   const parentID = parentCacheRef.has(id) ? parentCacheRef.get(id)! : null;
 
-  Zotero.debug(
-    `[Numify] Collection deleted: id=${id}, parentID=${parentID}`
-  );
+  Zotero.debug(`[Numify] Collection deleted: id=${id}, parentID=${parentID}`);
 
   // Remove from caches
   parentCacheRef.delete(id);
@@ -210,7 +224,7 @@ function updateCacheForSubtree(collection: Zotero.Collection): void {
  */
 function refreshNameCacheForParent(
   parentID: number | false | null,
-  libraryID: number
+  libraryID: number,
 ): void {
   const nameCacheRef = getNameCache();
 
@@ -251,7 +265,7 @@ export function registerCollectionObserver(): void {
       event: string,
       type: string,
       ids: (string | number)[],
-      extraData: Record<string, any>
+      extraData: Record<string, any>,
     ) => {
       if (_isRenumbering) return;
       if (type !== "collection") return;
@@ -287,7 +301,7 @@ export function registerCollectionObserver(): void {
   observerID = Zotero.Notifier.registerObserver(
     observer,
     ["collection"],
-    "numify"
+    "numify",
   );
 
   const addon = getAddon();
@@ -338,18 +352,24 @@ export function registerPrefObservers(): void {
   // Use full absolute keys with global=true to match what the prefs pane writes
   const sepSym = Zotero.Prefs.registerObserver(
     "extensions.zotero.numify.separator",
-    () => { renumberAllLibraries(); },
-    true
+    () => {
+      renumberAllLibraries();
+    },
+    true,
   );
   const depthSym = Zotero.Prefs.registerObserver(
     "extensions.zotero.numify.maxDepth",
-    () => { renumberAllLibraries(); },
-    true
+    () => {
+      renumberAllLibraries();
+    },
+    true,
   );
   const padZeroSym = Zotero.Prefs.registerObserver(
     "extensions.zotero.numify.padZero",
-    () => { renumberAllLibraries(); },
-    true
+    () => {
+      renumberAllLibraries();
+    },
+    true,
   );
   _prefObservers = [sepSym, depthSym, padZeroSym];
   Zotero.debug("[Numify] Pref observers registered");
