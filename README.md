@@ -41,7 +41,7 @@ Library
 
 ## Requirements
 
-- **Zotero 7.0 or later** — Download from [zotero.org](https://www.zotero.org/download/)
+- **Zotero 7, 8, 9, or 10** — Download from [zotero.org](https://www.zotero.org/download/)
 
 ## Installation
 
