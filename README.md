@@ -160,7 +160,11 @@ When enabled, top-level prefixes 1–9 are padded to 01–09. This ensures colle
 
 ---
 
-<a href="https://ai-label.org/"><img src="https://ai-label.org/image-pack/ai-label_banner-assisted-by-ai.svg" alt="Assisted by AI" width="200"></a>
+<p align="center">
+  <a href="https://ai-label.org/">
+    <img src="https://ai-label.org/image-pack/ai-label_banner-assisted-by-ai.svg" alt="Assisted by AI label">
+  </a>
+</p>
 
 This project was designed with assistance from AI. Learn more about the [AI label](https://ai-label.org/) initiative.
 
