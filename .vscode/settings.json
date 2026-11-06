@@ -1,0 +1,16 @@
+{
+	"pendant.sessionNameGeneration": {
+		"model": "ollama-cloud/deepseek-v4-flash:0731"
+	},
+	"pendant.showThinking": true,
+	"pendant.thinkingDisplayMode": "collapsed",
+	"pendant.chat.promptSuggestions": {
+		"model": "ollama-cloud/deepseek-v4-flash:0731",
+		"thinking": "max"
+	},
+	"pendant.context.autoAttach": false,
+	"pendant.scm.commitMessageInstructions": {
+		"model": "ollama-cloud/deepseek-v4-flash:0731",
+		"thinking": "high"
+	}
+}
